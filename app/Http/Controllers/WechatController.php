@@ -13,7 +13,27 @@ class WechatController extends Controller
 //        $access_token = Wechat::existToken($request);
 //        echo  $access_token;
         $postStr = $GLOBALS['HTTP_RAW_POST_DATA'];
-        file_put_contents('a.txt', $postStr);
+        if (!empty($postStr)) {
+            libxml_disable_entity_loader(true);
+            $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
+            $fromUserName = $postObj->FromUserName;
+            $toUserName = $postObj->ToUserName;
+            $keyword = trim($postObj->Content);
+            $time = time();
+            $textTpl = "<xml>
+                            <ToUserName><![CDATA[%s]]></ToUserName>
+                            <FromUserName><![CDATA[%s]]></FromUserName>
+                            <CreateTime>%s</CreateTime>
+                            <MsgType><![CDATA[%s]]></MsgType>
+                            <Content><![CDATA[%s]]></Content>
+                        </xml>";
+        }
+        if ($keyword == "dudu") {
+            $res = sprintf($textTpl, $fromUserName, $toUserName, $time, 'text', '欢迎嘟嘟来到这里');
+            echo $res;
+        } else {
+            echo "nothing....";
+        }
         exit;
         // 将timestamp, nonce, token按字典序排序
         $timestamp = $request['timestamp'];
