@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\Wechat;
 use Illuminate\Http\Request;
 
 class WechatController extends Controller
 {
+
     public function index(Request $request)
     {
-	 // 将timestamp, nonce, token按字典序排序
+//        $access_token = Wechat::existToken($request);
+//        echo  $access_token;
+        $postStr = $GLOBALS['HTTP_RAW_POST_DATA'];
+        file_put_contents('a.txt', $postStr);
+        exit;
+        // 将timestamp, nonce, token按字典序排序
         $timestamp = $request['timestamp'];
         $nonce = $request['nonce'];
         $echostr = $request['echostr'];
@@ -25,7 +32,9 @@ class WechatController extends Controller
             echo $echostr;
             exit;
         } else {
-	    echo 22222;
+            echo 22222;
         }
     }
+
+
 }
