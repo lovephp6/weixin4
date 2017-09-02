@@ -8,12 +8,18 @@ use Illuminate\Http\Request;
 class WechatController extends Controller
 {
 
+    public function __construct(Request $request)
+    {
+	$this->index($request);
+    }
+
     public function index(Request $request)
     {
-//        $access_token = Wechat::existToken($request);
-//        echo  $access_token;
-        $postStr = $GLOBALS['HTTP_RAW_POST_DATA'];
-        if (!empty($postStr)) {
+    //    $access_token = Wechat::existToken($request);
+      //  echo  $access_token;exit;
+        $postStr = file_get_contents("php://input");
+	file_put_contents(resource_path('/views/test.blade.php'), $postStr);
+	if (!empty($postStr)) {
             libxml_disable_entity_loader(true);
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
             $fromUserName = $postObj->FromUserName;
@@ -27,34 +33,16 @@ class WechatController extends Controller
                             <MsgType><![CDATA[%s]]></MsgType>
                             <Content><![CDATA[%s]]></Content>
                         </xml>";
-        }
-        if ($keyword == "dudu") {
-            $res = sprintf($textTpl, $fromUserName, $toUserName, $time, 'text', '欢迎嘟嘟来到这里');
-            echo $res;
-        } else {
-            echo "nothing....";
-        }
-        exit;
-        // 将timestamp, nonce, token按字典序排序
-        $timestamp = $request['timestamp'];
-        $nonce = $request['nonce'];
-        $echostr = $request['echostr'];
-        $token = 'lovephpforweixin';
-        $signature = $request['signature'];
-        $arr = [$timestamp, $nonce, $token];
-        sort($arr);
 
-        // 将排序后的三个参数拼接之后用sha1加密
-        $str = sha1(implode('',$arr));
-
-        //将加密后的字符串与signature进行对比,判断该请求是否来自微信
-        if ($str == $signature && $echostr) {
-            echo $echostr;
-            exit;
-        } else {
-            echo 22222;
+            if ($keyword) {
+                $res = sprintf($textTpl, $fromUserName, $toUserName, $time, 'text', '欢迎dudu来到这里');
+                echo $res;
+            } else {
+                echo "nothing....";
+            }
+        }else{
+            echo '';exit;
         }
+
     }
-
-
 }
